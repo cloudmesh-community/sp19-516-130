@@ -7,4 +7,6 @@ Jeevan Reddy's Progress: \
 1/28/2019- Read about the Cloud Architectures of AWS, Azure, Watson, OpenStack \
 1/28/2019 - Installed PyCharm for Windows \
 1/28/2019 - Started working on Python 3.7.1 through CLI \
-1/28/2019 - Successfully sent a picture from my PC to Google Drive through Python program 
+1/28/2019 - Successfully sent a picture from my PC to Google Drive through Python program \
+1/30/2019 - Written Python program for uploading, downloading files from my PC to Google Drive \
+1/30/2019 - Written Python program for listing and querying files on Google Drive \
