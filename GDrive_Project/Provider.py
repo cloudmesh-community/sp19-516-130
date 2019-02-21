@@ -79,10 +79,20 @@ class Provider:
 
     def get(self, filename):#this is working fine
         #hardcoded
-        file_id = "1vmC8PNQf48r2TAivi5NDNHY7MWBWL0jf"#fileId instead of file name
+        #file_id = "1vmC8PNQf48r2TAivi5NDNHY7MWBWL0jf"#fileId instead of file name
         #in the future for each file we have uploaded we need to store that 
         #info in a database and 
+        #file_id = searchFileLocally(filename)
+
+        file_id = ""
+        df = pd.read_csv("GDriveStorage.csv")
+        for i in range(df.shape[0]):
+            if df.loc[i,"FileName"] == filename:
+                file_id = df.loc[i,"FileID"]
+                break
+        
         filepath = "google_download.jpg"#file name in our local folder
+
         request = drive_service.files().get_media(fileId=file_id)
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
@@ -112,7 +122,7 @@ class Provider:
 
 
         
-    def searchFile(query):#this is not working
+    def searchFile(self,query):#this is not working
         size = 10
         results = drive_service.files().list(
         pageSize=size,fields="nextPageToken, files(id, name, kind, mimeType)",q=query).execute()
@@ -126,7 +136,15 @@ class Provider:
                 print('{0} ({1})'.format(item['name'], item['id']))
         return items[0]['id']
 
+    def searchFileLocally(self,filename):
+        fileID = ""
+        df = pd.read_csv("GDriveStorage.csv")
+        for i in range(len(df.shape[0])):
+            if df.loc[i,"FileName"] == filename:
+                fileID = df.loc[i,"FileID"]
+                break
 
+        return fileID
 
 SCOPES = 'https://www.googleapis.com/auth/drive'
 CLIENT_SECRET_FILE = 'client_secret.json'
@@ -139,8 +157,8 @@ http = credentials.authorize(httplib2.Http())
 drive_service = discovery.build('drive', 'v3', http=http)
 
 new_q = Provider(SCOPES,CLIENT_SECRET_FILE,APPLICATION_NAME,authInst,credentials,http,drive_service,scriptpath)
-new_q.put("photo_test.jpg")
-#new_q.get("photo_test.jpg")
+#new_q.put("photo_test.jpg")
+new_q.get("photo_test.jpg")
 #new_q.delete("photo_test.jpg")
 fileName = "photo_test.jpg"
 #query = "name contains " + str(fileName)
