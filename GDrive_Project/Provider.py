@@ -127,7 +127,7 @@ http = credentials.authorize(httplib2.Http())
 drive_service = discovery.build('drive', 'v3', http=http)
 
 new_q = Provider(SCOPES,CLIENT_SECRET_FILE,APPLICATION_NAME,authInst,credentials,http,drive_service,scriptpath)
-#new_q.put("photo_test.jpg")
+new_q.put("photo_test.jpg")
 #new_q.get("photo_test.jpg")
 #new_q.delete("photo_test.jpg")
 fileName = "photo_test.jpg"
