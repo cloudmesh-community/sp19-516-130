@@ -14,7 +14,7 @@ from oauth2client import tools
 from oauth2client.file import Storage
 from apiclient.http import MediaFileUpload, MediaIoBaseDownload
 
-
+import pandas as pd
 
 scriptpath = str(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0,scriptpath)
@@ -64,6 +64,18 @@ class Provider:
                                         fields='id').execute()
         print('File ID: %s' % file.get('id'))
         print("put", filename)
+        #print("Hi")
+        df = pd.read_csv("GDriveStorage.csv")
+        #print(df)
+        rowLength = df.shape[0]
+        #rowLength = rowLength +1
+        df.loc[rowLength,:] = rowLength
+        df.loc[rowLength,"FileName"] = filename
+        df.loc[rowLength,"FileID"] = file.get('id')
+        #print(df)
+        df.to_csv("GDriveStorage.csv")
+
+
 
     def get(self, filename):#this is working fine
         #hardcoded
