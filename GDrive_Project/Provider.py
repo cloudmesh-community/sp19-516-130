@@ -52,7 +52,8 @@ class Provider:
     def put(self, filename):#this is working fine
         file_metadata = {'name': filename}
         self.drive_service = drive_service
-        
+
+        """
         with open("FileTypes.json") as w:
             ft = json.loads(w)       
 
@@ -68,8 +69,9 @@ class Provider:
         except:
             mimetype = "image/jpeg"
             print("File format is adjusted to jpg style")
-
-
+            """
+        mimetype = "image/jpeg"
+        filepath = filename
         media = MediaFileUpload(filepath,
                             mimetype=mimetype)
         file = drive_service.files().create(body=file_metadata,
@@ -174,7 +176,7 @@ http = credentials.authorize(httplib2.Http())
 drive_service = discovery.build('drive', 'v3', http=http)
 
 new_q = Provider(SCOPES,CLIENT_SECRET_FILE,APPLICATION_NAME,authInst,credentials,http,drive_service,scriptpath)
-#new_q.put("photo_test.jpg")
+new_q.put("photo_test.jpg")
 #new_q.get("photo_test.jpg")
 #new_q.delete("photo_test.jpg")
 #fileName = "photo_test.jpg"
