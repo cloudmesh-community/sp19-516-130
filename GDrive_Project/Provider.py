@@ -15,6 +15,7 @@ from oauth2client.file import Storage
 from apiclient.http import MediaFileUpload, MediaIoBaseDownload
 
 import pandas as pd
+import json
 
 scriptpath = str(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0,scriptpath)
@@ -52,10 +53,22 @@ class Provider:
         file_metadata = {'name': filename}
         self.drive_service = drive_service
         
-        #Hard coding
-        
+        with open("FileTypes.json") as w:
+            ft = json.loads(w)       
+
+
         filepath = filename
-        mimetype = "image/jpeg"
+        mimetype = "image/jpeg"# initilization
+        filenamelist = filename.split(".")
+        fileForm = filenamelist[-1]
+        try:
+
+            mimetype = ft[str(fileForm)]
+
+        except:
+            mimetype = "image/jpeg"
+            print("File format is adjusted to jpg style")
+
 
         media = MediaFileUpload(filepath,
                             mimetype=mimetype)
@@ -79,7 +92,6 @@ class Provider:
 
     def get(self, filename):#this is working fine
         #hardcoded
-        #file_id = "1vmC8PNQf48r2TAivi5NDNHY7MWBWL0jf"#fileId instead of file name
         #in the future for each file we have uploaded we need to store that 
         #info in a database and 
         #file_id = searchFileLocally(filename)
@@ -90,8 +102,8 @@ class Provider:
             if df.loc[i,"FileName"] == filename:
                 file_id = df.loc[i,"FileID"]
                 break
-        
-        filepath = "google_download.jpg"#file name in our local folder
+        next = str(int(df.shape[0] + 100)) #giving file name dynamically
+        filepath = "google_download" +next + ".jpg"#file name in our local folder
 
         request = drive_service.files().get_media(fileId=file_id)
         fh = io.BytesIO()
@@ -105,18 +117,14 @@ class Provider:
             f.write(fh.read())
         print("gdrive provider get", filename)
 
-    def delete(self, filename):#this is partially working
-        #try:
-        #query = "name contains " + str(fileName)
-        #size = 100
-        #file_id = searchFile(query)
-        #file_id = "1vmC8PNQf48r2TAivi5NDNHY7MWBWL0jf"
+    def delete(self, filename):#this is working
         
         file_id = ""
         df = pd.read_csv("GDriveStorage.csv")
         for i in range(df.shape[0]):
             if df.loc[i,"FileName"] == filename:
                 file_id = df.loc[i,"FileID"]
+                df.drop(df.index[i])
                 break
         self.drive_service = drive_service
         try:
@@ -124,11 +132,9 @@ class Provider:
         except:#errors.HttpError, error:
             print ('An error occurred:')# %s' % error
         print("delete", filename, file_id)
-        #except:
-            #print("No file named " + str(filename) + " in the Google Drive")
 
 
-        
+    """    
     def searchFile(self,query):#this is not working
         size = 10
         results = drive_service.files().list(
@@ -153,6 +159,10 @@ class Provider:
 
         return fileID
 
+    """
+
+    
+
 SCOPES = 'https://www.googleapis.com/auth/drive'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Drive API Python Quickstart'
@@ -166,8 +176,8 @@ drive_service = discovery.build('drive', 'v3', http=http)
 new_q = Provider(SCOPES,CLIENT_SECRET_FILE,APPLICATION_NAME,authInst,credentials,http,drive_service,scriptpath)
 #new_q.put("photo_test.jpg")
 #new_q.get("photo_test.jpg")
-new_q.delete("photo_test.jpg")
-fileName = "photo_test.jpg"
+#new_q.delete("photo_test.jpg")
+#fileName = "photo_test.jpg"
 #query = "name contains " + str(fileName)
 #print(query)
 #new_q.searchFile("name contains 'photo_test'")
