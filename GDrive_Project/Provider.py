@@ -105,20 +105,27 @@ class Provider:
             f.write(fh.read())
         print("gdrive provider get", filename)
 
-    def delete(self, file_id):#this is partially working
+    def delete(self, filename):#this is partially working
+        #try:
+        #query = "name contains " + str(fileName)
+        #size = 100
+        #file_id = searchFile(query)
+        #file_id = "1vmC8PNQf48r2TAivi5NDNHY7MWBWL0jf"
+        
+        file_id = ""
+        df = pd.read_csv("GDriveStorage.csv")
+        for i in range(df.shape[0]):
+            if df.loc[i,"FileName"] == filename:
+                file_id = df.loc[i,"FileID"]
+                break
+        self.drive_service = drive_service
         try:
-            #query = "name contains " + str(fileName)
-            #size = 100
-            #file_id = searchFile(query)
-            file_id = "1vmC8PNQf48r2TAivi5NDNHY7MWBWL0jf"
-            self.drive_service = drive_service
-            try:
-                drive_service.files().delete(fileId=file_id).execute()
-            except:#errors.HttpError, error:
-                print ('An error occurred:')# %s' % error
-            print("put", fileName, file_id)
-        except:
-            print("No file named " + str(fileName) + " in the Google Drive")
+            drive_service.files().delete(fileId=file_id).execute()
+        except:#errors.HttpError, error:
+            print ('An error occurred:')# %s' % error
+        print("delete", filename, file_id)
+        #except:
+            #print("No file named " + str(filename) + " in the Google Drive")
 
 
         
@@ -158,8 +165,8 @@ drive_service = discovery.build('drive', 'v3', http=http)
 
 new_q = Provider(SCOPES,CLIENT_SECRET_FILE,APPLICATION_NAME,authInst,credentials,http,drive_service,scriptpath)
 #new_q.put("photo_test.jpg")
-new_q.get("photo_test.jpg")
-#new_q.delete("photo_test.jpg")
+#new_q.get("photo_test.jpg")
+new_q.delete("photo_test.jpg")
 fileName = "photo_test.jpg"
 #query = "name contains " + str(fileName)
 #print(query)
