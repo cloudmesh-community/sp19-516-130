@@ -103,7 +103,7 @@ class Provider:
         for i in range(df.shape[0]):
             if df.loc[i,"FileName"] == filename:
                 file_id = df.loc[i,"FileID"]
-                break
+                #break
         next = str(int(df.shape[0] + 100)) #giving file name dynamically
         filepath = "google_download" +next + ".jpg"#file name in our local folder
 
@@ -126,8 +126,8 @@ class Provider:
         for i in range(df.shape[0]):
             if df.loc[i,"FileName"] == filename:
                 file_id = df.loc[i,"FileID"]
-                df.drop(df.index[i])
-                break
+                #df.drop(df.index[i])
+                #break
         self.drive_service = drive_service
         try:
             drive_service.files().delete(fileId=file_id).execute()
@@ -176,7 +176,7 @@ http = credentials.authorize(httplib2.Http())
 drive_service = discovery.build('drive', 'v3', http=http)
 
 new_q = Provider(SCOPES,CLIENT_SECRET_FILE,APPLICATION_NAME,authInst,credentials,http,drive_service,scriptpath)
-new_q.put("photo_test.jpg")
+#new_q.put("photo_test.jpg")
 #new_q.get("photo_test.jpg")
 #new_q.delete("photo_test.jpg")
 #fileName = "photo_test.jpg"
