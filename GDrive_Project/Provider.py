@@ -162,6 +162,26 @@ class Provider:
         return fileID
 
     """
+    def createFolder(self,name):
+        file_metadata = {'name': name,'mimeType': 'application/vnd.google-apps.folder'}
+        self.drive_service = drive_service
+    
+    
+        file = drive_service.files().create(body=file_metadata,
+                                        fields='id').execute()
+
+        #needs to store this in a mongoDB
+        print ('Folder ID: %s' % file.get('id'))
+    def listFiles(self,size=10):
+        self.size = size
+        results = drive_service.files().list(pageSize=size,fields="nextPageToken, files(id, name)").execute()
+        items = results.get('files', [])
+        if not items:
+            print('No files found.')
+        else:
+            print('Files:')
+            for item in items:
+                print('{0} ({1})'.format(item['name'], item['id']))
 
     
 
@@ -176,6 +196,7 @@ http = credentials.authorize(httplib2.Http())
 drive_service = discovery.build('drive', 'v3', http=http)
 
 new_q = Provider(SCOPES,CLIENT_SECRET_FILE,APPLICATION_NAME,authInst,credentials,http,drive_service,scriptpath)
+#new_q.createFolder("testy")
 #new_q.put("photo_test.jpg")
 #new_q.get("photo_test.jpg")
 #new_q.delete("photo_test.jpg")
