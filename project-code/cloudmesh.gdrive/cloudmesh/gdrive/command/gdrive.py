@@ -16,8 +16,13 @@ class GdriveCommand(PluginCommand):
         ::
 
           Usage:
-                gdrive --file=FILE
-                gdrive list
+            storage [--storage=<SERVICE>] create dir DIRECTORY
+            storage [--storage=<SERVICE>] list SOURCE [--recursive]
+            storage [--storage=<SERVICE>] put SOURCE DESTINATION [--recursive]
+            storage [--storage=<SERVICE>] get SOURCE DESTINATION [--recursive]
+            storage [--storage=<SERVICE>] delete SOURCE
+            storage [--storage=<SERVICE>] search DIRECTORY FILENAME [--recursive]
+
 
           This command does some useful things.
 
