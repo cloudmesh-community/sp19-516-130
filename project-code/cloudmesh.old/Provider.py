@@ -28,22 +28,22 @@ except ImportError:
     flags = None
 
 
-import auth
+import authentication
 
 
 
 class Provider:
     
-    def __init__(self,SCOPES,CLIENT_SECRET_FILE,APPLICATION_NAME,authInst,credentials,http,drive_service,scriptpath):
+    def __init__(self,scopes,clientSecretFile,applicationName,authInst,credentials,http,driveService,scriptpath):
 
 
-        self.SCOPES = SCOPES
-        self.CLIENT_SECRET_FILE = CLIENT_SECRET_FILE
-        self.APPLICATION_NAME = APPLICATION_NAME
+        self.scopes = scopes
+        self.clientSecretFile = clientSecretFile
+        self.applicationName = applicationName
         self.authInst = authInst
         self.credentials = credentials
         self.http = http
-        self.drive_service = drive_service
+        self.driveService = driveService
         self.scriptpath = scriptpath
 
 
@@ -51,7 +51,7 @@ class Provider:
 
     def put(self, filename):#this is working fine
         file_metadata = {'name': filename}
-        self.drive_service = drive_service
+        self.driveService = driveService
 
         """
         with open("FileTypes.json") as w:
@@ -74,7 +74,7 @@ class Provider:
         filepath = filename
         media = MediaFileUpload(filepath,
                             mimetype=mimetype)
-        file = drive_service.files().create(body=file_metadata,
+        file = driveService.files().create(body=file_metadata,
                                         media_body=media,
                                         fields='id').execute()
         print('File ID: %s' % file.get('id'))
@@ -107,7 +107,7 @@ class Provider:
         next = str(int(df.shape[0] + 100)) #giving file name dynamically
         filepath = "google_download" +next + ".jpg"#file name in our local folder
 
-        request = drive_service.files().get_media(fileId=file_id)
+        request = driveService.files().get_media(fileId=file_id)
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
         done = False
@@ -128,9 +128,9 @@ class Provider:
                 file_id = df.loc[i,"FileID"]
                 #df.drop(df.index[i])
                 #break
-        self.drive_service = drive_service
+        self.driveService = driveService
         try:
-            drive_service.files().delete(fileId=file_id).execute()
+            driveService.files().delete(fileId=file_id).execute()
         except:#errors.HttpError, error:
             print ('An error occurred:')# %s' % error
         print("delete", filename, file_id)
@@ -139,7 +139,7 @@ class Provider:
     """    
     def searchFile(self,query):#this is not working
         size = 10
-        results = drive_service.files().list(
+        results = driveService.files().list(
         pageSize=size,fields="nextPageToken, files(id, name, kind, mimeType)",q=query).execute()
         items = results.get('files', [])
         if not items:
@@ -164,17 +164,17 @@ class Provider:
     """
     def createFolder(self,name):
         file_metadata = {'name': name,'mimeType': 'application/vnd.google-apps.folder'}
-        self.drive_service = drive_service
+        self.driveService = driveService
     
     
-        file = drive_service.files().create(body=file_metadata,
+        file = driveService.files().create(body=file_metadata,
                                         fields='id').execute()
 
         #needs to store this in a mongoDB
         print ('Folder ID: %s' % file.get('id'))
     def listFiles(self,size=10):
         self.size = size
-        results = drive_service.files().list(pageSize=size,fields="nextPageToken, files(id, name)").execute()
+        results = driveService.files().list(pageSize=size,fields="nextPageToken, files(id, name)").execute()
         items = results.get('files', [])
         if not items:
             print('No files found.')
@@ -185,17 +185,17 @@ class Provider:
 
     
 
-SCOPES = 'https://www.googleapis.com/auth/drive'
-CLIENT_SECRET_FILE = 'client_secret.json'
-APPLICATION_NAME = 'Drive API Python Quickstart'
-authInst = auth.auth(SCOPES,CLIENT_SECRET_FILE,APPLICATION_NAME)
-credentials = authInst.getCredentials()
+scopes = 'https://www.googleapis.com/auth/drive'
+clientSecretFile = 'client_secret.json'
+applicationName = 'Drive API Python Quickstart'
+authInst = authentication.authentication(scopes,clientSecretFile,applicationName)
+credentials = authInst.get_credentials()
 
 
 http = credentials.authorize(httplib2.Http())
-drive_service = discovery.build('drive', 'v3', http=http)
+driveService = discovery.build('drive', 'v3', http=http)
 
-new_q = Provider(SCOPES,CLIENT_SECRET_FILE,APPLICATION_NAME,authInst,credentials,http,drive_service,scriptpath)
+new_q = Provider(scopes,clientSecretFile,applicationName,authInst,credentials,http,driveService,scriptpath)
 #new_q.createFolder("testy")
 #new_q.put("photo_test.jpg")
 #new_q.get("photo_test.jpg")

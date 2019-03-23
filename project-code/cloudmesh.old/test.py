@@ -2,7 +2,7 @@ from __future__ import print_function
 from docopt import docopt
 
 import Provider
-import auth
+import authentication
 
 import httplib2
 import os, io
@@ -29,19 +29,19 @@ try:
 except ImportError:
     flags = None
 
-SCOPES = 'https://www.googleapis.com/auth/drive'
-CLIENT_SECRET_FILE = 'client_secret.json'
-APPLICATION_NAME = 'Drive API Python Quickstart'
-authInst = auth.auth(SCOPES,CLIENT_SECRET_FILE,APPLICATION_NAME)
-credentials = authInst.getCredentials()
+scopes = 'https://www.googleapis.com/auth/drive'
+clientSecretFile = 'client_secret.json'
+applicationName = 'Drive API Python Quickstart'
+authInst = authentication.authentication(scopes,clientSecretFile,applicationName)
+credentials = authInst.get_credentials()
 
 
 http = credentials.authorize(httplib2.Http())
 drive_service = discovery.build('drive', 'v3', http=http)
 
 if __name__ == "__main__":
-    new_q = Provider.Provider(SCOPES,CLIENT_SECRET_FILE,APPLICATION_NAME,authInst,credentials,http,drive_service,scriptpath)
-    #new_q.createFolder("testy")
+    new_q = Provider.Provider(scopes,clientSecretFile,applicationName,authInst,credentials,http,drive_service,scriptpath)
+    new_q.createFolder("testy")
     #new_q.put("photo_test.jpg")
     #new_q.get("photo_test.jpg")
     #new_q.delete("photo_test.jpg")
