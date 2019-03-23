@@ -91,6 +91,23 @@ class Provider:
         df.to_csv("GDriveStorage.csv")
 
 
+    def putf(self, filename):#this is working fine
+        file_metadata = {'name': filename}
+        self.driveService = driveService
+
+        mimetype = "image/jpeg"
+        filepath = filename
+        media = MediaFileUpload(filepath,
+                            mimetype=mimetype)
+        file = driveService.files().create(body=file_metadata,
+                                        media_body=media,
+                                        fields='id').execute()
+        print('File ID: %s' % file.get('id'))
+        print("put", filename)
+
+
+
+
 
     def get(self, filename):#this is working fine
         #hardcoded
@@ -119,6 +136,41 @@ class Provider:
             f.write(fh.read())
         print("gdrive provider get", filename)
 
+    
+    
+    def getf(self, filename):#this is working fine
+        """
+            Searching all the files in GDrive
+            and then comparing the given filename with 
+            the file in cloud and then downloading it
+        """
+
+        file_id = ""
+
+        items = Provider.listFiles(self)
+        next = str(len(items))
+
+        for i in range(len(items)):
+            if items[i]['name'] == filename:
+                file_id = items[i]['id']
+        
+
+
+        filepath = "google_download" +next + ".jpg"#file name in our local folder
+
+        request = driveService.files().get_media(fileId=file_id)
+        fh = io.BytesIO()
+        downloader = MediaIoBaseDownload(fh, request)
+        done = False
+        while done is False:
+            status, done = downloader.next_chunk()
+            print("Download %d%%." % int(status.progress() * 100))
+            #print("Download ")
+        with io.open(filepath,'wb') as f:
+            fh.seek(0)
+            f.write(fh.read())
+        print("gdrive provider get", filename)
+
     def delete(self, filename):#this is working
         
         file_id = ""
@@ -134,6 +186,30 @@ class Provider:
         except:#errors.HttpError, error:
             print ('An error occurred:')# %s' % error
         print("delete", filename, file_id)
+
+    def deletef(self, filename):#this is working
+        
+        file_id = ""
+
+        items = Provider.listFiles(self)
+        next = str(len(items))
+
+        
+        for i in range(len(items)):
+            if items[i]['name'] == filename:
+                file_id = items[i]['id']
+        
+
+
+        self.driveService = driveService
+        try:
+            driveService.files().delete(fileId=file_id).execute()
+        except:#errors.HttpError, error:
+            print ('An error occurred:')# %s' % error
+        print("delete", filename, file_id)
+
+    
+    
 
 
     """    
@@ -172,16 +248,21 @@ class Provider:
 
         #needs to store this in a mongoDB
         print ('Folder ID: %s' % file.get('id'))
+
+        
     def listFiles(self,size=10):
         self.size = size
-        results = driveService.files().list(pageSize=size,fields="nextPageToken, files(id, name)").execute()
+        results = driveService.files().list(pageSize=size,fields="nextPageToken, files(id, name,mimeType)").execute()
         items = results.get('files', [])
+        #print(items)
         if not items:
             print('No files found.')
         else:
             print('Files:')
             for item in items:
-                print('{0} ({1})'.format(item['name'], item['id']))
+                #print('{0} ({1})'.format(item['name'], item['id']))
+                print("FileId : {id}, FileName : {name}, FileType : {mimeType}  ".format(**item))
+        return items
 
     
 
@@ -195,7 +276,7 @@ credentials = authInst.get_credentials()
 http = credentials.authorize(httplib2.Http())
 driveService = discovery.build('drive', 'v3', http=http)
 
-new_q = Provider(scopes,clientSecretFile,applicationName,authInst,credentials,http,driveService,scriptpath)
+#new_q = Provider(scopes,clientSecretFile,applicationName,authInst,credentials,http,driveService,scriptpath)
 #new_q.createFolder("testy")
 #new_q.put("photo_test.jpg")
 #new_q.get("photo_test.jpg")
