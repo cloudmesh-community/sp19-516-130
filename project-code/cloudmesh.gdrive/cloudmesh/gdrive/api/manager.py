@@ -23,17 +23,17 @@ class Manager(object):
     def funcname(self, parameter_list):
         raise NotImplementedError [--storage=<SERVICE>] search DIRECTORY FILENAME [--recursive]
 
-    def list(storage = None, source = None):
+    def list(self, storage = None, source = None):
         pass
 
-    def put(storage = None, source = None, destination = None):
+    def put(self, storage = None, source = None, destination = None):
         pass
 
-    def get(storage = None, source = None, destination = None):
+    def get(self, storage = None, source = None, destination = None):
         pass
     
-    def delete(storage = None, source=None):
+    def delete(self, storage = None, source=None):
         pass
 
-    def search(storage=None, directory = None, filename =None):
+    def search(self, storage=None, directory = None, filename =None):
         pass
