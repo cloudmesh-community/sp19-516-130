@@ -1,4 +1,4 @@
-class Manager(object):
+class Provider(object):
 
     def __init__(self):
         print("init {name}".format(name=self.__class__.__name__))
@@ -21,7 +21,7 @@ class Manager(object):
 
 
     def funcname(self, parameter_list):
-        raise NotImplementedError [--storage=<SERVICE>] search DIRECTORY FILENAME [--recursive]
+        raise NotImplementedError #[--storage=<SERVICE>] search DIRECTORY FILENAME [--recursive]
 
     def list(self, storage = None, source = None):
         pass

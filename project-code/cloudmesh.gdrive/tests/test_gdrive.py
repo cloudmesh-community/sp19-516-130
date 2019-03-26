@@ -1,25 +1,53 @@
 from pprint import pprint
 from cloudmesh.common.util import HEADING
-from cloudmesh.compute.libcloud.Provider import Provider
+from cloudmesh.gdrive.api.manager import Provider
 from cloudmesh.management.configuration.config import Config
 from cloudmesh.common.Printer import Printer
-from cloudmesh.common.FlatDict import FlatDict, flatten
-from cloudmesh.management.configuration.SSHkey import SSHkey
 
 # nosetest -v --nopature
 # nosetests -v --nocapture tests/test_gdrive.py
 
 class TestName:
 
+
     def setup(self):
-        self.sshkey = SSHkey()
 
+        scopes = 'https://www.googleapis.com/auth/drive'
+        clientSecretFile = 'client_secret.json'
+        applicationName = 'Drive API Python Quickstart'
+        authInst = authentication.authentication(scopes, clientSecretFile, applicationName)
+        credentials = authInst.get_credentials()
 
-    def test_01_key(self):
+        http = credentials.authorize(httplib2.Http())
+        drive_service = discovery.build('drive', 'v3', http=http)
+
+        self.p = Provider.Provider(scopes,
+                                   clientSecretFile,
+                                   applicationName,
+                                   authInst,
+                                   credentials,
+                                   http,
+                                   drive_service,
+                                  scriptpath)
+
+    def test_01_configuration(self):
         HEADING()
         config = Config()
         credential = config["cloudmesh.storage.gdrive"]
         pprint(credential)
+
+    def test_02_createFolder(self):
+        HEADING()
+        self.p.create_dir("testy")
+
+        files = self.p.list()
+        for entry in files:
+            if entry["name"] == "testy":
+                assert True
+
+        assert False
+
+
 
 class other:
 
