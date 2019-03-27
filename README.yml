@@ -5,13 +5,9 @@ owner:
   hid: sp19-516-130
   community: e516
   semester: sp19
-  Now you can clone this entire repository and can send \
-  a file in your system to Googled Drive \
-  But make sure you run "pip install -r requirements.txt" \
-  in Python 3.7.2 version . \
-  Project link: \
-  
-https://github.com/cloudmesh-community/sp19-516-130/tree/master/project-code
+project:
+  - title: ???
+    url: https://github.com/cloudmesh-community/sp19-516-130/tree/master/project-code
 
 
 
