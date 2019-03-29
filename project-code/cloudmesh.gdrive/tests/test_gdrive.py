@@ -4,6 +4,13 @@ from cloudmesh.gdrive.api.manager import Provider
 from cloudmesh.management.configuration.config import Config
 from cloudmesh.common.Printer import Printer
 
+
+
+scriptpath = str(os.path.dirname(os.path.realpath(__file__)))
+sys.path.insert(0,scriptpath)
+scriptpath = scriptpath
+
+
 # nosetest -v --nopature
 # nosetests -v --nocapture tests/test_gdrive.py
 
