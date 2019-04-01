@@ -36,4 +36,9 @@ Jeevan Reddy's Progress: \
 3/22/2019 - Created  cloudmesh.gdrive for Google Drive project \
 3/23/2019 - Wrote 2 versions of functions for get, put, delete and createdir in project \
 3/26/2019 - Attended in-person zoom meeting with professor 
+3/29/2019- Attended the residential class hours \
+3/29/2019 - Installed Virtual Box Ubuntu in my Windows 10 system \
+3/29/2019 - Installed pyenv and cloudmesh folders in the Virtual box \
+3/30/2019 - Forked the CM repository and added the Google Drive YAML credentials \
+3/30/2019 - Made the code changes and added the Provider.py and Authentication.py 
 
