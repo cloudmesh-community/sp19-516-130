@@ -16,6 +16,7 @@ from apiclient.http import MediaFileUpload, MediaIoBaseDownload
 
 import pandas as pd
 import json
+import os
 
 scriptpath = str(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0,scriptpath)
@@ -95,7 +96,7 @@ class Provider:
         file_metadata = {'name': filename}
         self.driveService = driveService
 
-        mimetype = "image/jpeg"
+        mimetype = "application/vnd.google-apps.folder"
         filepath = filename
         media = MediaFileUpload(filepath,
                             mimetype=mimetype)
@@ -156,7 +157,7 @@ class Provider:
         
 
 
-        filepath = "google_download" +next + ".jpg"#file name in our local folder
+        filepath = filename#file name in our local folder
 
         request = driveService.files().get_media(fileId=file_id)
         fh = io.BytesIO()
@@ -252,7 +253,10 @@ class Provider:
         
     def listFiles(self,size=10):
         self.size = size
-        results = driveService.files().list(pageSize=size,fields="nextPageToken, files(id, name,mimeType)").execute()
+        # results = driveService.files().list(q='name="testy"and trashed=false', pageSize=size, fields="nextPageToken, files(id, name, mimeType, parents)").execute()
+        results = driveService.files().list(q='"1FrUY3crvqMgZc60KrYVhpcKUVFCuxHT7" in parents', pageSize=size,
+                                            fields="nextPageToken, files(id, name, mimeType, parents)").execute()
+
         items = results.get('files', [])
         #print(items)
         if not items:
@@ -264,7 +268,41 @@ class Provider:
                 print("FileId : {id}, FileName : {name}, FileType : {mimeType}  ".format(**item))
         return items
 
-    
+    def fileTypetoMimeType(self, filename):
+
+        fimidict = {"jpg": "image/jpeg",
+                    "mp4": "video/mp4",
+                    "mp3": "audio/mp3",
+                    "json": "text/json",
+                    "png": "image/png",
+                    "txt": "text/text",
+                    "csv": "text/csv"}
+        mimetype = "image/jpeg"
+
+        filetype = filename.split(".")[-1]
+
+        try:
+            mimetype = fimidict[filetype]
+        except:
+            mimetype = "image/jpeg"
+
+        return mimetype
+
+    def mimeToFileType(self, mimeType):
+
+        fimidict = {"jpg": "image/jpeg",
+                    "mp4": "video/mp4",
+                    "mp3": "audio/mp3",
+                    "json": "text/json",
+                    "png": "image/png",
+                    "txt": "text/text",
+                    "csv": "text/csv"}
+
+        fileType = None
+        for k,v in fimidict.items():
+            if mimeType == v:
+                fileType = "." + k
+        return fileType
 
 scopes = 'https://www.googleapis.com/auth/drive'
 clientSecretFile = 'client_secret.json'
@@ -276,10 +314,10 @@ credentials = authInst.get_credentials()
 http = credentials.authorize(httplib2.Http())
 driveService = discovery.build('drive', 'v3', http=http)
 
-#new_q = Provider(scopes,clientSecretFile,applicationName,authInst,credentials,http,driveService,scriptpath)
+new_q = Provider(scopes,clientSecretFile,applicationName,authInst,credentials,http,driveService,scriptpath)
 #new_q.createFolder("testy")
 #new_q.put("photo_test.jpg")
-#new_q.get("photo_test.jpg")
+new_q.getf("testy")
 #new_q.delete("photo_test.jpg")
 #fileName = "photo_test.jpg"
 #query = "name contains " + str(fileName)

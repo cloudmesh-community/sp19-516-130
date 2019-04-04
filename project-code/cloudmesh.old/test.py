@@ -56,3 +56,4 @@ if __name__ == "__main__":
     #new_q.searchFile("name contains 'photo_test'")
     #new_q.searchFile('photo')
     new_q.listFiles()
+    #new_q.putf("awer")
