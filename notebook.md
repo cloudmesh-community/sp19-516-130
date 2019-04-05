@@ -40,5 +40,11 @@ Jeevan Reddy's Progress: \
 3/29/2019 - Installed Virtual Box Ubuntu in my Windows 10 system \
 3/29/2019 - Installed pyenv and cloudmesh folders in the Virtual box \
 3/30/2019 - Forked the CM repository and added the Google Drive YAML credentials \
-3/30/2019 - Made the code changes and added the Provider.py and Authentication.py 
+3/30/2019 - Made the code changes and added the Provider.py and Authentication.py \
+4/2/2019 - Attended zoom meeting with professor for project code walk through and some bugs to fix \
+4/3/2019 - Pushed the updated code (with less bugs) in to the clodmesh.stotage repository \
+           https://github.com/cloudmesh/cloudmesh-storage/tree/master/cloudmesh/storage/provider/gdrive  \
+4/3/2019 - Now the gdrive Provider.py follows the structure and standards of StorageABC class \
+4/5/2019 - Attended the residential class meeting 
+           
 
