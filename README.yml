@@ -7,8 +7,8 @@ owner:
   semester: sp19
 project:
   - title: Google Drive
-    url: https://github.com/cloudmesh-community/sp19-516-130/tree/master/project-code
-    url: https://github.com/cloudmesh/cloudmesh-storage/tree/master/cloudmesh/storage/provider/gdrive 
+    url1: https://github.com/cloudmesh-community/sp19-516-130/tree/master/project-code
+    url2: https://github.com/cloudmesh/cloudmesh-storage/tree/master/cloudmesh/storage/provider/gdrive 
 
 
 
