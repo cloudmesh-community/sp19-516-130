@@ -47,24 +47,52 @@ Before writing the Python interface for Google Drive, we need to setup an email 
 account we will get a set of google services and one of them is Google Drive with 15 GB overall storage. <br />
 
 After that we need to go through the Google Drive Quick start guide given below: <br />
-https://developers.google.com/drive/api/v3/quickstart/python  <br />
+https://developers.google.com/drive/api/v3/quickstart/python  <br /> <br />
 
-There we can see Enable API option as shown in the below picture: <br />
+There we can see Enable API option as shown in the below picture: <br /> <br />
 
 ![image1](https://user-images.githubusercontent.com/26592419/55688921-6fd30e00-594c-11e9-9ced-da3202f39935.png)
 
 
 Once we enable that we will get credentials.json file where all of our credentials are stored that can be used <br />
 to communicate with our Google Drive through Python Interface. <br />
-After that, we will be redirected to a page where we need to create our own project as shown in the below picture:<br />
+After that, we will be redirected to a page where we need to create our own project as shown in the below picture:<br /> <br />
 
-Image2
+![image2](https://user-images.githubusercontent.com/26592419/55689362-7e6ff400-5951-11e9-945e-0727a63f9357.png)
+
+As we see below we need to select Google Drive API from here  <br /> <br />
+
+![gd1](https://user-images.githubusercontent.com/26592419/55689509-32be4a00-5953-11e9-9fc8-8e7a8d87588b.png)
+
 
 After that, we need to obtain the client_secret file as shown below:<br />
+(The file that is downloaded as client_id.json needs to be renamed as client_secret.json) <br /> <br /> 
+
+![image3](https://user-images.githubusercontent.com/26592419/55689414-22f23600-5952-11e9-83ff-5e21a2329455.png)
+
+After this we need to click Done otherwise it would not set the Google Drive API <br /> 
+
+After this if we run Authentication.py we will be redirected to our default browser to put our our login id and password and <br />
+after that it asks to authenticate our credentials. If we allow that as shown below: <br /> <br />
+
+![gd2](https://user-images.githubusercontent.com/26592419/55689531-99436800-5953-11e9-8aff-2ba64a481506.png)
+
+
+We will get the screen something like given below (as the authentication pipeline has bees completed). <br /> <br />
+
+![gd3](https://user-images.githubusercontent.com/26592419/55689565-f63f1e00-5953-11e9-978e-8a5c2b2f8228.png)
+
+If the authentication flow is completed then the Authentication.py will create a "google-drive-credentials.json" file in <br />
+".credentials" folder. This file can be used for future purposes. If we delete this file then the Authentication.py <br />
+will again ask for login id and password and again create that file automatically. <br /> <br />
+
+**So, now with the client_secret.json, google-drive-credentials.json and with Authentication.py and Provider.py our setup is ready**
+
+<br />
+
 Once all these steps are done correctly, then we can use the Python program interface to transfer the files <br />
 between our Python program and Google Drive.<br />
 
-Imagen
 
 
 
