@@ -1,6 +1,3 @@
-Just open the Provider.py <br />
-and Run the program accordingly \
-All the credentials have been included here <br />
 
 ## Google Drive
 Google Drive is a file storing platform where an user can store all his/her files in the google drive. Here files <br />
