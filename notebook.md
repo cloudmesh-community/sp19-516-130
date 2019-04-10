@@ -45,6 +45,12 @@ Jeevan Reddy's Progress: \
 4/3/2019 - Pushed the updated code (with less bugs) in to the clodmesh.stotage repository \
            https://github.com/cloudmesh/cloudmesh-storage/tree/master/cloudmesh/storage/provider/gdrive  \
 4/3/2019 - Now the gdrive Provider.py follows the structure and standards of StorageABC class \
-4/5/2019 - Attended the residential class meeting 
+4/5/2019 - Attended the residential class meeting \
+4/8/2019- Fixed the flags bug in Provider.py
+4/8/2019- Written the Gdrive provider startup code markdown documentation \
+           https://github.com/cloudmesh/cloudmesh-storage/blob/master/cloudmesh/storage/provider/gdrive/README.md \
+4/8/2019- Written the Gdrive provider setup markdown documentation \
+           https://github.com/cloudmesh-community/sp19-516-130/blob/master/gdrive.md \
+4/8/2019- Written the tests for gdrive 
            
 
