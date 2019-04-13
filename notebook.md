@@ -51,6 +51,11 @@ Jeevan Reddy's Progress: \
            https://github.com/cloudmesh/cloudmesh-storage/blob/master/cloudmesh/storage/provider/gdrive/README.md \
 4/8/2019- Written the Gdrive provider setup markdown documentation \
            https://github.com/cloudmesh-community/sp19-516-130/blob/master/gdrive.md \
-4/8/2019- Written the tests for gdrive 
+4/8/2019- Written the tests for gdrive \
+4/12/2019- Attended the residential class meeting \
+4/12/2019 - Fixed the cloudmesh along with Prof. Gregor in my VM Ubuntu. It is finally working 
+
+
+
            
 
