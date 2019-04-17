@@ -7,7 +7,7 @@ owner:
   semester: sp19
 project:
   - title: Google Drive
-    url: https://github.com/cloudmesh/cloudmesh-storage/tree/master/cloudmesh/storage/provider/gdrive
+    url: https://github.com/cloudmesh/cloudmesh-storage/tree/master/cloudmesh/storage/provider/gdrive/README.md
 
 
 
