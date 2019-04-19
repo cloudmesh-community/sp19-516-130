@@ -10,7 +10,6 @@ project:
     url: https://github.com/cloudmesh/cloudmesh-storage/tree/master/cloudmesh/storage/provider/gdrive/README.md
     pytest:
       - TBD
-
-
-
-
+section:
+  - title: Google Drive Account creation
+    url: https://github.com/cloudmesh/cloudmesh-manual/tree/master/docs-source/source/accounts/storage-gdrive.md
