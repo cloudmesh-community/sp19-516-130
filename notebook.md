@@ -53,7 +53,15 @@ Jeevan Reddy's Progress: \
            https://github.com/cloudmesh-community/sp19-516-130/blob/master/gdrive.md \
 4/8/2019- Written the tests for gdrive \
 4/12/2019- Attended the residential class meeting \
-4/12/2019 - Fixed the cloudmesh along with Prof. Gregor in my VM Ubuntu. It is finally working 
+4/12/2019 - Fixed the cloudmesh along with Prof. Gregor in my VM Ubuntu. It is finally working \
+4/16/2019 - Written the new Provider.py and modified Authentication.py in my project \
+4/16/2019 - Written the pytests script for my project \
+4/16/2019 - Updated the documentation of gdrive.md as suggested by professor Gregor \
+4/19/2019 - Attended the residential class meeting \
+4/19/2019 - Uploaded the documentation for Google Drive account creation and can be found at \
+           https://github.com/cloudmesh/cloudmesh-manual/tree/master/docs-source/source/accounts/storage-gdrive.md \
+4/19/2019- Modified the pytests to runtests
+
 
 
 
