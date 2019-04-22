@@ -1,0 +1,23 @@
+    gdrive:
+        cm:
+            heading: GDrive
+            host: dgrive.google.com
+            label: GDrive
+            kind: gdrive
+            version: TBD
+        default:
+            directory: TBD
+        credentials:
+            client_id: "605083724477-1lhaauu9csjdb3r378ajq236beddvam2.apps.googleusercontent.com"
+            project_id: "artful-sky-231001"
+            auth_uri: "https://accounts.google.com/o/oauth2/auth"
+            token_uri: "https://oauth2.googleapis.com/token"
+            client_secret: "0jTr9aPTJVvtqCVQBHCd_xTZ"
+            auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs"
+            auth_host_name: "localhost"
+            auth_host_port:
+            - "8080"
+            - "8090"
+            redirect_uris:
+            - "urn:ietf:wg:oauth:2.0:oob"
+            - "http://localhost"
