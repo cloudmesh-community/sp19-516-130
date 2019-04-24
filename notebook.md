@@ -60,7 +60,10 @@ Jeevan Reddy's Progress: \
 4/19/2019 - Attended the residential class meeting \
 4/19/2019 - Uploaded the documentation for Google Drive account creation and can be found at \
            https://github.com/cloudmesh/cloudmesh-manual/tree/master/docs-source/source/accounts/storage-gdrive.md \
-4/19/2019- Modified the pytests to runtests
+4/19/2019- Modified the pytests to runtests\
+4/20/2019- Ran the 6 pytests sucessfully \
+4/23/2019- Had meeting with Professor Gregor about the code modification and documentation and work flow \
+4/24/2019 - Created the 2 folders in my hid directory for code comparison and modification 
 
 
 
