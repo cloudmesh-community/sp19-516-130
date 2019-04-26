@@ -8,7 +8,7 @@ from apiclient.http import MediaFileUpload
 from apiclient.http import MediaIoBaseDownload
 from cloudmesh.common.util import path_expand
 from cloudmesh.storage.StorageABC import StorageABC
-from apiclient import discovery
+from apiclient import discovgirery
 from cloudmesh.DEBUG import VERBOSE
 from oauth2client import client
 from oauth2client import tools
@@ -195,7 +195,7 @@ class Provider(StorageABC):
                                          parent_it=file_parent_id)
 			result.append(entry)
             #Every object that is uploaded needs to be added to result, the reult at the end will be returned
-	    #This is happening for every if else here
+	        #This is happening for every if else here
 	    else:
 
                 query_params = f"name='{destination}' and trashed=false"
@@ -397,3 +397,13 @@ class Provider(StorageABC):
             fh.seek(0)
             f.write(fh.read())
         return filepath
+
+
+        # Merge the authentication code in to provier code successfully
+        #make the credentials path clear i.e., reading from cloudmesh4.yaml
+        #createdir, list, search, delete all are working good
+        #put and get recursive way is not working well enough
+        #as it is suggested by prof. gregor the below put, get method needs to be followed.
+        #go through the mongodb sequentially and create the folders in that fashion
+        #then go through the files and make files similar to that in a parallel or sequential way
+        #
