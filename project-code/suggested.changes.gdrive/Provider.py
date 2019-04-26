@@ -32,7 +32,7 @@ class Provider(StorageABC):
         credentials:
             logging_level: 'ERROR'
             noauth_local_webserver: False
-            page_size: 1000000
+            page_size: 1000
             name: cloudmesh
             scope: "https://www.googleapis.com/auth/drive"
             location_secret: ~/.cloudmesh/gdrive/client_secret.json
@@ -53,7 +53,7 @@ class Provider(StorageABC):
 
     """
     def load_credentials(self, conig_path='~/.cloudmesh/cloudmesh4.yaml',location_secret=None,location_gdrive_credentials=None):
-        raise NotImplementedError
+
         """
            This function will load the credentials that have been downloaded from google into
            the '~/.cloudmesh/gdrive' folder
@@ -62,6 +62,8 @@ class Provider(StorageABC):
 
 
         """
+
+
 
     def get_credentials(self):
 
@@ -108,8 +110,8 @@ class Provider(StorageABC):
 
         self.applicationName = self.credentials["name"]
         self.page_size = self.credentials["page_size"]
-	if self.page_size > 1000:
-		Console.error("page size must be smaller than 1000")
+	    if self.page_size > 1000:
+		    Console.error("page size must be smaller than 1000")
 		sys.exit(1)
         self.scopes = self.credentials["scope"]
 
@@ -117,21 +119,21 @@ class Provider(StorageABC):
         # Create directories if they do not exists. typically they will all be in one dir
         #
 	#do not execute the for loop if the directories exist
-	if True:
-		
-		for path in [self.credentials["location_secret"],
-		             self.credentials["location_gdrive_credentials"]]:
-		             
-		    path = os.path.dirname(Path(path).resolve())
-		    if not os.path.exists(path):
-		        os.makedirs(path)
-	
+	    if True:
+
+            for path in [self.credentials["location_secret"],
+                         self.credentials["location_gdrive_credentials"]]:
+
+                path = os.path.dirname(Path(path).resolve())
+                if not os.path.exists(path):
+                    os.makedirs(path)
+
 
 		self.clientSecretFile = path_expand(self.credentials["location"])
 	 
 
 		self.write_json_key(self.clientSecretFile, self.credentials)
-	#This is the end of the if condition 
+	    #This is the end of the if condition
 
         self.authInst = self.get_credentials()
         self.gdrive_credentials = self.authInst.get_credentials()
@@ -144,21 +146,21 @@ class Provider(StorageABC):
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-	#update the data based on the information of yaml file        
-	data = {
-            "installed": {
-                "client_id": credentials["client_id"],
-                "project_id": credentials["project_id"],
-                "auth_uri": credentials["auth_uri"],
-                "token_uri": credentials["token_uri"],
-                "client_secret": credentials["client_secret"],#is this correct?
-                "auth_provider_x509_cert_url": credentials[
-                    "auth_provider_x509_cert_url"],
-                "redirect_uris": credentials["redirect_uris"]
+        #update the data based on the information of yaml file
+        data = {
+                "installed": {
+                    "client_id": credentials["client_id"],
+                    "project_id": credentials["project_id"],
+                    "auth_uri": credentials["auth_uri"],
+                    "token_uri": credentials["token_uri"],
+                    "client_secret": credentials["client_secret"],#is this correct?
+                    "auth_provider_x509_cert_url": credentials[
+                        "auth_provider_x509_cert_url"],
+                    "redirect_uris": credentials["redirect_uris"]
+                }
             }
-        }
-        with open(path, 'w') as fp:
-            json.dump(data, fp)
+            with open(path, 'w') as fp:
+                json.dump(data, fp)
 
     def gdrive_sourceid(self, query_params):
         sourceid = self.driveService.files().list(
@@ -178,7 +180,7 @@ class Provider(StorageABC):
 
     def put(self, service=None, source=None, destination=None, recursive=False):
 	
-	result = []
+	    result = []
         if recursive:
             if os.path.isdir(source):
                 query_params = f"name='{destination}' and trashed=false"
@@ -226,7 +228,7 @@ class Provider(StorageABC):
                 return self.upload_file(source=None, filename=source,
                                         parent_it=file_parent_id)
 
-	return result
+	            return result
 	#This needs to be done for all the functions in the same manner
     def get(self, service=None, source=None, destination=None, recursive=False):
 
@@ -283,7 +285,7 @@ class Provider(StorageABC):
             for i in range(len(items)):
                 if items[i]['name'] == filename:
                     file_id = items[i]['id']
-		    break
+		             break
 
             try:
                 self.driveService.files().delete(fileId=file_id).execute()
@@ -299,13 +301,13 @@ class Provider(StorageABC):
             except:  # errors.HttpError, error:
                 return 'An error occurred:'  # %s' % error
         return "deleted"
-	#this will return all deleted files with dict with status being added where the status is "deleted"
+	    #this will return all deleted files with dict with status being added where the status is "deleted"
 
     def create_dir(self, service='gdrive', directory=None):
         file_metadata = {
             'name': directory,
-            'mimeType': 'application/vnd.google-apps.folder'
-        }
+            'mimeType': 'application/vnd.google-apps.folder'}
+
         file = self.driveService.files().create(body=file_metadata,
                                                 fields='id').execute()
         print('Folder ID: %s' % file.get('id'))
