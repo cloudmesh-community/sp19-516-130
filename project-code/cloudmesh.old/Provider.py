@@ -126,6 +126,8 @@ class Provider:
         filepath = "google_download" +next + ".jpg"#file name in our local folder
 
         request = driveService.files().get_media(fileId=file_id)
+        print("nskjcksjdcsdkjcsd0")
+        print(request)
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
         done = False
@@ -152,6 +154,7 @@ class Provider:
         next = str(len(items))
 
         for i in range(len(items)):
+            print(items[i])
             if items[i]['name'] == filename:
                 file_id = items[i]['id']
         
@@ -160,6 +163,8 @@ class Provider:
         filepath = filename#file name in our local folder
 
         request = driveService.files().get_media(fileId=file_id)
+        print('xmkasmckslmclksm')
+        print(request)
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
         done = False
@@ -250,23 +255,54 @@ class Provider:
         #needs to store this in a mongoDB
         print ('Folder ID: %s' % file.get('id'))
 
-        
+    def update_dict(self, elements):
+        if elements is None:
+            return None
+        elif type(elements) is list:
+            _elements = elements
+        else:
+            _elements = [elements]
+        d = []
+        for element in _elements:
+            entry = element
+            entry["cm"] = {
+                "kind": "storage",
+                "cloud": 'gdrive',
+                "name": element['name'],
+            }
+            # print(entry.keys())
+            for c in ['modifiedTime', 'createdTime', 'size']:
+                if c in entry.keys():
+                    #print("hi")
+                    entry['cm'][c] = entry[c]
+                else:
+                    entry['cm'][c] = None
+            for p in ['id', 'name', 'mimeType', 'parents', 'createdTime',
+                      'size', 'modifiedTime']:
+                if p in entry.keys():
+                    del (entry[p])
+            d.append(entry)
+        return d
+
     def listFiles(self,size=10):
         self.size = size
         # results = driveService.files().list(q='name="testy"and trashed=false', pageSize=size, fields="nextPageToken, files(id, name, mimeType, parents)").execute()
         results = driveService.files().list(q='"1FrUY3crvqMgZc60KrYVhpcKUVFCuxHT7" in parents', pageSize=size,
-                                            fields="nextPageToken, files(id, name, mimeType, parents)").execute()
+                                            fields="nextPageToken, files(id, name, mimeType, parents,size,modifiedTime,createdTime )").execute()
 
         items = results.get('files', [])
         #print(items)
         if not items:
             print('No files found.')
         else:
-            print('Files:')
-            for item in items:
-                #print('{0} ({1})'.format(item['name'], item['id']))
-                print("FileId : {id}, FileName : {name}, FileType : {mimeType}  ".format(**item))
+            print(items)
+            #print('Files:')
+            # for item in items:
+            #     print(item)
+        # print(self.update_dict(items))
+        # return self.update_dict(items)
         return items
+
 
     def fileTypetoMimeType(self, filename):
 
@@ -322,5 +358,6 @@ new_q.getf("testy")
 #fileName = "photo_test.jpg"
 #query = "name contains " + str(fileName)
 #print(query)
-#new_q.searchFile("name contains 'photo_test'")
-#new_q.searchFile('photo')
+# new_q.searchFile("name contains 'photo_test'")
+# new_q.sea('photo')
+#new_q.listFiles() --> working fine

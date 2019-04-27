@@ -52,27 +52,18 @@ class Provider(StorageABC):
             - "http://localhost"
 
     """
-    def load_credentials(self, conig_path='~/.cloudmesh/cloudmesh4.yaml',location_secret=None,location_gdrive_credentials=None):
-
-        """
-           This function will load the credentials that have been downloaded from google into
-           the '~/.cloudmesh/gdrive' folder
-           If none is specified for the locations, the locations are read from the yaml file
-           After the load the yaml is returned back it will fill out the client_id, auth_id from these json files
-
-
-        """
-
-
+    def generate_flags_json(self):
+        credentials = self.config.credentials("storage", "gdrive")
+        args = argparse.Namespace(auth_host_name=credentials["auth_host_name"],
+                                  auth_host_port=credentials["auth_host_port"],
+                                  logging_level='ERROR', noauth_local_webserver=False)
+        return args
 
     def get_credentials(self):
 
         """
-            We have stored the credentials in the directory"~/.cloudmesh/gdrive/.credentials/google-drive-credentials.json"
-            In addition to this file we also store the file ~/.cloudmesh/gdrive/client_secret.json
-	    These files are created from the information provided in the cloudmesh yaml file
-
-
+            We have stored the credentials in ".credentials"
+            folder and there is a file named 'google-drive-credentials.json'
             that has all the credentials required for our authentication
             If there is nothing stored in it this program creates credentials
             json file for future authentication
@@ -80,26 +71,27 @@ class Provider(StorageABC):
         :return:
         :rtype:
         """
+        #
+        # Why is this not read from the yaml file?
+        path = Path(path_expand(self.credential_file)).resolve()
+        if not os.path.exists(path):
+            os.makedirs(path)
 
-        credentials_path = Path(self.credentials["location_gdrive_credentials"]).resolve()
+        credentials_path = (path / 'google-drive-credentials.json').resolve()
         print(credentials_path)
 
         store = Storage(credentials_path)
         credentials = store.get()
         if not credentials or credentials.invalid:
-            flow = client.flow_from_clientsecrets(
-                self.client_secret_file,
-                self.scopes)
+            flow = client.flow_from_clientsecrets(self.client_secret_file,
+                                                  self.scopes)
             flow.user_agent = self.application_name
+            #
+            # SHOUDL THE FLAGS NOT BE SET IN THE YAML FILE OR DOCOPTS OFTHE COMMAND?
+            #
+            if self.flags:
+                credentials = tools.run_flow(flow, store, self.flags)
 
-            credentials = tools.run_flow(
-                flow,
-                store,
-                auth_host_name=self.credentials["auth_host_name"],
-                auth_host_port=self.credentials["auth_host_port"],
-                logging_level=self.credentials["logging_level"],
-                noauth_local_webserver=self.credentials["noauth_local_webserver"]
-            )
         return credentials
 
     def __init__(self, service='gdrive', config="~/.cloudmesh/cloudmesh4.yaml"):
@@ -110,31 +102,21 @@ class Provider(StorageABC):
 
         self.applicationName = self.credentials["name"]
         self.page_size = self.credentials["page_size"]
-	    if self.page_size > 1000:
-		    Console.error("page size must be smaller than 1000")
-		sys.exit(1)
+        if self.page_size > 1000:
+            Console.error("page size must be smaller than 1000")
+            sys.exit(1)
         self.scopes = self.credentials["scope"]
-
+        self.flags = self.generate_flags_json()
         #
         # Create directories if they do not exists. typically they will all be in one dir
-        #
-	#do not execute the for loop if the directories exist
-	    if True:
-
-            for path in [self.credentials["location_secret"],
-                         self.credentials["location_gdrive_credentials"]]:
-
-                path = os.path.dirname(Path(path).resolve())
-                if not os.path.exists(path):
-                    os.makedirs(path)
-
-
-		self.clientSecretFile = path_expand(self.credentials["location"])
-	 
-
-		self.write_json_key(self.clientSecretFile, self.credentials)
-	    #This is the end of the if condition
-
+        # do not execute the for loop if the directories exist
+        for path in [self.credentials["location_secret"], self.credentials["location_gdrive_credentials"]]:
+            path = os.path.dirname(Path(path).resolve())
+            if not os.path.exists(path):
+                os.makedirs(path)
+        self.clientSecretFile = path_expand(self.credentials["location"])
+        self.write_json_key(self.clientSecretFile, self.credentials)
+        #This is the end of the if condition
         self.authInst = self.get_credentials()
         self.gdrive_credentials = self.authInst.get_credentials()
         self.http = self.gdrive_credentials.authorize(httplib2.Http())
@@ -179,67 +161,80 @@ class Provider(StorageABC):
         return file_parent_id
 
     def put(self, service=None, source=None, destination=None, recursive=False):
-	
-	    result = []
+        result = []
         if recursive:
             if os.path.isdir(source):
-                query_params = f"name='{destination}' and trashed=false"
-                sourceid = self.gdrive_sourceid(query_params)
-                VERBOSE(sourceid)# from cloudmesh.DEBUG import VERBOSE
-                file_parent_id = self.gdrive_parentid(sourceid, destination)
+                query_params = "name='" + destination + "' and trashed=false"
+                sourceid = self.driveService.files().list(q=query_params,
+                                                          fields="nextPageToken, files(id, name, mimeType)").execute()
+                file_parent_id = None
+                print(sourceid)
+                if len(sourceid['files']) == 0:
+                    parent_file = self.create_dir(directory=destination)
+                    file_parent_id = parent_file['id']
+                else:
+                    print(sourceid['files'][0]['id'])
+                    file_parent_id = sourceid['files'][0]['id']
 
                 for f in os.listdir(source):
                     if os.path.isfile(os.path.join(source, f)):
-			
-                        entry = self.upload_file(source=source, filename=f,
+                        self.upload_file(source=source, filename=f,
                                          parent_it=file_parent_id)
-			result.append(entry)
-            #Every object that is uploaded needs to be added to result, the reult at the end will be returned
-	        #This is happening for every if else here
-	    else:
-
-                query_params = f"name='{destination}' and trashed=false"
-                sourceid = self.gdrive_sourceid(query_params)
+            else:
+                query_params = "name='" + destination + "' and trashed=false"
+                sourceid = self.driveService.files().list(q=query_params,
+                                                          fields="nextPageToken, files(id, name, mimeType)").execute()
+                file_parent_id = None
                 print(sourceid)
-                file_parent_id = self.gdrive_parentid(sourceid, destination)
+                if len(sourceid['files']) == 0:
+                    parent_file = self.create_dir(directory=destination)
+                    file_parent_id = parent_file['id']
+                else:
+                    print(sourceid['files'][0]['id'])
+                    file_parent_id = sourceid['files'][0]['id']
 
-                return self.upload_file(source=None, filename=source,
-                                        parent_it=file_parent_id)
+                return self.upload_file(source=None, filename=source, parent_it=file_parent_id)
         else:
             if os.path.isdir(source):
-                query_params = f"name='{destination}' and trashed=false"
-                sourceid = self.gdrive_sourceid(query_params)
+                query_params = "name='" + destination + "' and trashed=false"
+                sourceid = self.driveService.files().list(q=query_params,
+                                                          fields="nextPageToken, files(id, name, mimeType)").execute()
+                file_parent_id = None
                 print(sourceid)
-                file_parent_id = self.gdrive_parentid(sourceid, destination)
+                if len(sourceid['files']) == 0:
+                    parent_file = self.create_dir(directory=destination)
+                    file_parent_id = parent_file['id']
+                else:
+                    print(sourceid['files'][0]['id'])
+                    file_parent_id = sourceid['files'][0]['id']
 
                 for f in os.listdir(source):
                     if os.path.isfile(os.path.join(source, f)):
-                        entry = self.upload_file(source=source, filename=f,
+                        self.upload_file(source=source, filename=f,
                                          parent_it=file_parent_id)
-		    	result.append(entry)
             else:
-                query_params = f"name='{destination}' and trashed=false"
-                sourceid = self.driveService.files().list(
-                    q=query_params,
-                    fields="nextPageToken, files(id, name, mimeType)").execute()
+                query_params = "name='" + destination + "' and trashed=false"
+                sourceid = self.driveService.files().list(q=query_params,
+                                                          fields="nextPageToken, files(id, name, mimeType)").execute()
+                file_parent_id = None
                 print(sourceid)
-                file_parent_id = self.gdrive_parentid(sourceid, destination)
+                if len(sourceid['files']) == 0:
+                    parent_file = self.create_dir(directory=destination)
+                    file_parent_id = parent_file['id']
+                else:
+                    print(sourceid['files'][0]['id'])
+                    file_parent_id = sourceid['files'][0]['id']
 
-                return self.upload_file(source=None, filename=source,
-                                        parent_it=file_parent_id)
-
-	            return result
-	#This needs to be done for all the functions in the same manner
+                return self.upload_file(source=None, filename=source, parent_it=file_parent_id)
+    #This needs to be done for all the functions in the same manner
     def get(self, service=None, source=None, destination=None, recursive=False):
-
         if not os.path.exists(source):
             os.makedirs(source)
 
         if recursive:
-            query_params = f"name='{destination}' and trashed=false"
-            sourceid = self.driveService.files().list(
-                q=query_params,
-                fields="nextPageToken, files(id, name, mimeType)").execute()
+            query_params = "name='" + destination + "' and trashed=false"
+            sourceid = self.driveService.files().list(q=query_params,
+                                                      fields="nextPageToken, files(id, name, mimeType)").execute()
             print(sourceid)
             file_id = sourceid['files'][0]['id']
             file_name = sourceid['files'][0]['name']
@@ -250,15 +245,13 @@ class Provider(StorageABC):
                     if item['mimeType'] != 'application/vnd.google-apps.folder':
                         print("dbsakjdjksa")
                         print(item['mimeType'])
-                        return self.download(source, item['id'], item['name'],
-                                             item['mimeType'])
+                        return self.download(source, item['id'], item['name'], item['mimeType'])
             else:
                 return self.download(source, file_id, file_name, mime_type)
         else:
-            query_params = f"name='{destination}' and trashed=false"
-            sourceid = self.driveService.files().list(
-                q=query_params,
-                fields="nextPageToken, files(id, name, mimeType)").execute()
+            query_params = "name='" + destination + "' and trashed=false"
+            sourceid = self.driveService.files().list(q=query_params,
+                                                      fields="nextPageToken, files(id, name, mimeType)").execute()
             print(sourceid)
             file_id = sourceid['files'][0]['id']
             file_name = sourceid['files'][0]['name']
@@ -269,23 +262,18 @@ class Provider(StorageABC):
                     if item['mimeType'] != 'application/vnd.google-apps.folder':
                         print("dbsakjdjksa")
                         print(item['mimeType'])
-                        return self.download_file(source, item['id'],
-                                                  item['name'],
-                                                  item['mimeType'])
+                        return self.download_file(source, item['id'], item['name'], item['mimeType'])
             else:
                 return self.download_file(source, file_id, file_name, mime_type)
 
-    def delete(self,
-               service='gdrive',
-               filename=None,
+    def delete(self, service='gdrive', filename=None,
                recursive=False):  # this is working
         file_id = ""
         if recursive:
-            items = Provider.list(self, recursive=True)
+            items = self.list(self, recursive=True)
             for i in range(len(items)):
                 if items[i]['name'] == filename:
                     file_id = items[i]['id']
-		             break
 
             try:
                 self.driveService.files().delete(fileId=file_id).execute()
@@ -301,13 +289,10 @@ class Provider(StorageABC):
             except:  # errors.HttpError, error:
                 return 'An error occurred:'  # %s' % error
         return "deleted"
-	    #this will return all deleted files with dict with status being added where the status is "deleted"
 
     def create_dir(self, service='gdrive', directory=None):
-        file_metadata = {
-            'name': directory,
-            'mimeType': 'application/vnd.google-apps.folder'}
-
+        file_metadata = {'name': directory,
+                         'mimeType': 'application/vnd.google-apps.folder'}
         file = self.driveService.files().create(body=file_metadata,
                                                 fields='id').execute()
         print('Folder ID: %s' % file.get('id'))
@@ -315,26 +300,23 @@ class Provider(StorageABC):
 
     def list(self, service='gdrive', source=None, recursive=False):
         if recursive:
-            results = self.driveService.files().list(
-                pageSize=self.page_size,
-                fields="nextPageToken, files(id, name,mimeType)").execute()
+            results = self.driveService.files().list(pageSize=self.limitFiles,
+                                                     fields="nextPageToken, files(id, name,mimeType)").execute()
             items = results.get('files', [])
             if not items:
                 print('No files found.')
             else:
                 return items
         else:
-            query_params = f"name='{source}' and trashed=false"
-            sourceid = self.driveService.files().list(
-                q=query_params,
-                pageSize=self.page_size,
-                fields="nextPageToken, files(id)").execute()
+            query_params = "name='" + source + "' and trashed=false"
+            sourceid = self.driveService.files().list(q=query_params,
+                                                      pageSize=self.limitFiles,
+                                                      fields="nextPageToken, files(id)").execute()
             file_id = sourceid['files'][0]['id']
-            query_params = f"'{file_id}' in parents"
-            results = self.driveService.files().list(
-                q=query_params,
-                pageSize=self.page_size,
-                fields="nextPageToken, files(id, name, mimeType)").execute()
+            query_params = "'" + file_id + "' in parents"
+            results = self.driveService.files().list(q=query_params,
+                                                     pageSize=self.limitFiles,
+                                                     fields="nextPageToken, files(id, name, mimeType)").execute()
             items = results.get('files', [])
             print(items)
             if not items:
@@ -375,7 +357,7 @@ class Provider(StorageABC):
         if source is None:
             filepath = filename
         else:
-            filepath = f"{source}/{filename}"
+            filepath = source + '/' + filename
         media = MediaFileUpload(filepath,
                                 mimetype=mimetypes.guess_type(filename)[0])
         file = self.driveService.files().create(body=file_metadata,
@@ -384,8 +366,7 @@ class Provider(StorageABC):
         return file
 
     def download_file(self, source, file_id, file_name, mime_type):
-        filepath = f"{source}/{file_name}/" + mimetypes.guess_extension(
-            mime_type)
+        filepath = source + '/' + file_name + mimetypes.guess_extension(mime_type)
         request = self.driveService.files().get_media(fileId=file_id)
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
@@ -399,11 +380,10 @@ class Provider(StorageABC):
         return filepath
 
 
-        # Merge the authentication code in to provier code successfully
-        #make the credentials path clear i.e., reading from cloudmesh4.yaml
+        # Merge the authentication code in to provier code successfully --> done
+        #make the credentials path clear i.e., reading from cloudmesh4.yaml --> done
         #createdir, list, search, delete all are working good
         #put and get recursive way is not working well enough
         #as it is suggested by prof. gregor the below put, get method needs to be followed.
         #go through the mongodb sequentially and create the folders in that fashion
         #then go through the files and make files similar to that in a parallel or sequential way
-        #

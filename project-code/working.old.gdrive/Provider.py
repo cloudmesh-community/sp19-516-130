@@ -146,7 +146,8 @@ class Provider(StorageABC):
             file_name = sourceid['files'][0]['name']
             mime_type = sourceid['files'][0]['mimeType']
             if mime_type == 'application/vnd.google-apps.folder':
-                items = self.list(source=destination, recursive=False)
+                items = self.driveService.files().list(pageSize=self.limitFiles,
+                                                     fields="nextPageToken, files(id, name,mimeType)").execute()
                 for item in items:
                     if item['mimeType'] != 'application/vnd.google-apps.folder':
                         print("dbsakjdjksa")
@@ -163,7 +164,8 @@ class Provider(StorageABC):
             file_name = sourceid['files'][0]['name']
             mime_type = sourceid['files'][0]['mimeType']
             if mime_type == 'application/vnd.google-apps.folder':
-                items = self.list(source=destination, recursive=False)
+                items = self.driveService.files().list(pageSize=self.limitFiles,
+                                                     fields="nextPageToken, files(id, name,mimeType)").execute()
                 for item in items:
                     if item['mimeType'] != 'application/vnd.google-apps.folder':
                         print("dbsakjdjksa")
@@ -234,7 +236,8 @@ class Provider(StorageABC):
                recursive=False):
         if recursive:
             found = False
-            list_of_files = self.list(recursive=True)
+            list_of_files = self.driveService.files().list(pageSize=self.limitFiles,
+                                                     fields="nextPageToken, files(id, name,mimeType)").execute()
             print(list_of_files)
             for file in list_of_files:
                 print(file)
@@ -246,7 +249,8 @@ class Provider(StorageABC):
             return found
         else:
             found = False
-            list_of_files = self.list(source=directory, recursive=False)
+            list_of_files = self.driveService.files().list(pageSize=self.limitFiles,
+                                                     fields="nextPageToken, files(id, name,mimeType)").execute()
             print(list_of_files)
             for file in list_of_files:
                 print(file)
@@ -286,3 +290,14 @@ class Provider(StorageABC):
         return filepath
 
 
+new_q = Provider(scopes,clientSecretFile,applicationName,authInst,credentials,http,driveService,scriptpath)
+#new_q.createFolder("testy")
+#new_q.put("photo_test.jpg")
+#new_q.getf("testy")
+#new_q.delete("photo_test.jpg")
+#fileName = "photo_test.jpg"
+#query = "name contains " + str(fileName)
+#print(query)
+#new_q.searchFile("name contains 'photo_test'")
+#new_q.searchFile('photo')
+new_q.listFiles()
