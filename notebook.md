@@ -63,7 +63,12 @@ Jeevan Reddy's Progress: \
 4/19/2019- Modified the pytests to runtests\
 4/20/2019- Ran the 6 pytests sucessfully \
 4/23/2019- Had meeting with Professor Gregor about the code modification and documentation and work flow \
-4/24/2019 - Created the 2 folders in my hid directory for code comparison and modification 
+4/24/2019 - Created the 2 folders in my hid directory for code comparison and modification \
+4/25/2019- Removing Authentication.py and using only Provider.py \
+4/25/2019- Updating cloudmesh4.yaml file such that all the details required for authentication are fetched from yaml file. \
+4/29/2019- Updated the return types of all the function into a standardized format similar to the other providers like box and aws. \
+4/29/2019- Updated tests \
+5/1/2019 - Updated Create directories function 
 
 
 
