@@ -15,7 +15,7 @@ from apiclient import discovery
 
 class Provider(StorageABC):
 
-    def __init__(self, service='gdrive', config="~/.cloudmesh/cloudmesh4.yaml"):
+    def __init__(self, service='gdrive', config="~/.cloudmesh/cloudmesh.yaml"):
         
         super(Provider, self).__init__(service=service, config=config)
         self.limitFiles = 1000

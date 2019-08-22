@@ -94,7 +94,7 @@ class Provider(StorageABC):
 
         return credentials
 
-    def __init__(self, service='gdrive', config="~/.cloudmesh/cloudmesh4.yaml"):
+    def __init__(self, service='gdrive', config="~/.cloudmesh/cloudmesh.yaml"):
 
         super(Provider, self).__init__(service=service, config=config)
         self.cloud = service
@@ -381,7 +381,7 @@ class Provider(StorageABC):
 
 
         # Merge the authentication code in to provier code successfully --> done
-        #make the credentials path clear i.e., reading from cloudmesh4.yaml --> done
+        # make the credentials path clear i.e., reading from cloudmesh.yaml --> done
         #createdir, list, search, delete all are working good
         #put and get recursive way is not working well enough
         #as it is suggested by prof. gregor the below put, get method needs to be followed.
