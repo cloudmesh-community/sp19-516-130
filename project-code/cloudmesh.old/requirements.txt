@@ -38,7 +38,7 @@ openapi-spec-validator==0.2.4
 oyaml==0.9
 packaging==19.0
 pandas==0.24.1
-psutil==5.6.1
+psutil==5.6.6
 pyasn1==0.4.5
 pyasn1-modules==0.2.4
 Pygments==2.3.1
