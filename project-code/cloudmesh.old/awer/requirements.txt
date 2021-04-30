@@ -27,7 +27,7 @@ python-dateutil==2.8.0
 pytz==2018.9
 PyYAML==3.13
 requests==2.21.0
-rsa==4.0
+rsa==4.7
 six==1.12.0
 swagger-ui-bundle==0.0.3
 uritemplate==3.0.0
